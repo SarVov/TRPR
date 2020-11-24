@@ -1,0 +1,2 @@
+/home/rti/Рабочий стол/python_project/Source/914_trpr_dump.txt
+/home/rti/Рабочий стол/python_project/Source/trpr_prostoy_full.dump
