@@ -6,6 +6,7 @@ START_BIT_EXTENSION = 15
 STROBE_LENGTH = 84
 STROBE_SPACE = 40
 
+
 class Tic(object):
     u""" конструктор класса """
     def __init__(self, number, header, data):

@@ -12,6 +12,9 @@ import sys
 import os
 import csv
 from io import open
+import datetime
+
+now = datetime.datetime.now()
 
 reload(sys)
 sys.setdefaultencoding('utf8')
@@ -59,7 +62,7 @@ def main_method(fullpath=None, outputdir=None):
     subdict = OrderedDict()
     header = u' '
     if not outputdir:
-        outputdir = 'output'
+        outputdir = 'Output'
 
     if not fullpath:
         return
@@ -94,24 +97,25 @@ def main_method(fullpath=None, outputdir=None):
     for item in main_dict.keys():
         if check_bit(main_dict[item]):
             # номер тика из 0x0040
-            cur_number = main_dict[item][u'0x0040'][6]
+            cur_number = main_dict[item][u'0x0040'][5] + main_dict[item][u'0x0040'][6]
             #print(cur_number)
             list_of_tics.append(int(cur_number, 16))
-            #print(min(list_of_tics))
+            #print((list_of_tics))
             # расчет номер тика вычитанием минимального номера и исключением '0x'
             deducted = ((int(cur_number, 16) - (min(list_of_tics))))
+            #print(deducted) # Вывод относительного значения тактов
             res.append(Tic(deducted, item, main_dict[item]))
             count += 1
-        # else:
-        #     if res:
-        #         res[-1].setextention(main_dict[item])
-                # count += 1 # при счете по порядку следует убрать этот инкремент
+        else:
+            if res:
+                res[-1].setextention(main_dict[item])
+                count += 1 # при счете по порядку следует убрать этот инкремент
     # формирование выходного файла
     # определение имени файла
     path, filename = os.path.split(fullpath)
     outputfilename = filename[:filename.index(u'.')]
     outputdirname = outputdir + '/'
-    
+
     #outputfilename=outputfilename.decode('utf-8')
     #outputdirname = outputdirname.decode('utf-8')
     #filename = filename.decode('utf-8')
@@ -147,7 +151,9 @@ def main_method(fullpath=None, outputdir=None):
                 s += subitem + u':' + unicode(item[2][subitem]) + u'  ' + rusnames[subitem] + u'; '
                 s += u'Номер строба: %d\n ' % (item[1])
                 f.write(s)
-    print u'Operation completed successfully'
+    print unicode('Operation completed successfully for:' + '  ' + str(filename))
+    print unicode("Month: " + str(now.month) + ';' + ' Day: ' + str(now.day) + ';' + " Time: " + str(now.hour) + ':' +
+           str(now.minute) + ":" + str(now.second) + ';' + "\n")
 
 
 def final_json(j_dict):
