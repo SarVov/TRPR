@@ -1,3 +1,2 @@
 #!/bin/sh
-cd /home/rti/Рабочий\ стол/TRPR_parser/
-python2.7 main.py inputlist.txt
+python2.7 main.py 

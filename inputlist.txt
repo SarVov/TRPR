@@ -1,4 +1,4 @@
+./Source/trpr_prostoy_full.dump
+./Source/trpr_maxrazn_full.dump
 ./Source/dump.txt
 ./Source/914_trpr_dump.txt
-./Source/trpr_maxrazn_full.dump
-./Source/trpr_prostoy_full.dump

@@ -4,15 +4,16 @@ from __future__ import division
 from __future__ import with_statement
 from __future__ import absolute_import
 from collections import OrderedDict
+from io import open
 import re
-from tic import Tic
 import json
 import struct
 import sys
 import os
 import csv
-from io import open
 import datetime
+
+from tic import Tic
 
 now = datetime.datetime.now()
 
@@ -71,7 +72,7 @@ def main_method(fullpath=None, outputdir=None):
     with open(fullpath) as f:
         for line in f:
             match = re.search(r'[\d]{2}\:[\d]{2}\:[\d]{2}[\.]{1}[\d]*', line)
-            
+
             if match:
                 if header != u'':
                     #main_dict[main_dict.keys()[header]]=subdict
@@ -151,9 +152,10 @@ def main_method(fullpath=None, outputdir=None):
                 s += subitem + u':' + unicode(item[2][subitem]) + u'  ' + rusnames[subitem] + u'; '
                 s += u'Номер строба: %d\n ' % (item[1])
                 f.write(s)
+
     print unicode('Operation completed successfully for:' + '  ' + str(filename))
-    print unicode("Month: " + str(now.month) + ';' + ' Day: ' + str(now.day) + ';' + " Time: " + str(now.hour) + ':' +
-           str(now.minute) + ":" + str(now.second) + ';' + "\n")
+    #print unicode("Month: " + str(now.month) + ';' + ' Day: ' + str(now.day) + ';' + " Time: " + str(now.hour) + ':' +
+    #      str(now.minute) + ":" + str(now.second) + ':' + str(now.microsecond) + ';' + "\n")
 
 
 def final_json(j_dict):
@@ -193,7 +195,8 @@ def make_json(ticlist):
                     strobedict.update({parametr: hex_to_float(value)})
                 elif parametr in to_plusminus:
                     # если нужно анализировать положительный/отрицательный
-                    valuehead = value[:int(len(value)/2)]
+                    valuehead = value[:1]
+                    #valuehead = value[:int(len(value)/2)]
                     if valuehead == u'f' * len(valuehead):
                         strobedict.update({parametr: hex_to_negative(value)})
                     else:
@@ -207,18 +210,39 @@ def make_json(ticlist):
 
 
 def main():
-    # чтение строки аргументов
+    # # чтение строки аргументов
+    # try:
+    #     filename = sys.argv[1]
+    # except:
+    #     print u'No source list'
+    #     sys.exit(1)
+    #
+    # #чтение строк файла ресурсов
+    # with open(filename, u'r') as f:
+    #     source = f.read().splitlines()
+    # for sourcefile in source:
+    #     main_method(sourcefile)
     try:
-        filename = sys.argv[1]
+        listOfFiles = os.listdir('./Source')
+        files_for_parsing = []
     except:
-        print u'No source list'
-        sys.exit(1)
+        print u"Создайте папку 'Source' внутри проекта и скопируйте туда дамп-файлы для парсинга. " \
+                u"После чего повторите запуск"
+        sys.exit()
 
-    # чтение строк файла ресурсов
-    with open(filename, u'r') as f:
+    with open("inputlist.txt", u'w') as inputlist:
+        for entry in listOfFiles:
+            files_for_parsing.append(entry)
+            inputlist.write(unicode("./Source/" + entry + '\n'))
+        #inputlist.close()
+
+    with open("inputlist.txt", u'r') as f:
         source = f.read().splitlines()
     for sourcefile in source:
-        main_method(sourcefile)
+        if sourcefile != ".hgkeep":
+            main_method(sourcefile)
+        # else:
+        #     sourcefile += 1
 
 
 def hex_to_float(hex_str):
@@ -226,7 +250,8 @@ def hex_to_float(hex_str):
 
 
 def hex_to_negative(hex_str):
-    num_int = int(u'0x' + hex_str, 16)
+    #print (hex_str)
+    num_int = int(hex_str, 16)
     num_int -= 1
     bin_str = bin(num_int)
     result_bin = u''
